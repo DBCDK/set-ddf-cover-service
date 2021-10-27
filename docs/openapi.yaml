@@ -1,0 +1,84 @@
+openapi: 3.0.1
+info:
+  title: DDF coverservice event consumer
+  description: |
+    DDF coverservice content changes can be sent to this service to trigger
+    near-realtime updates of the rec.hasDDFCoverUrl index exposed by the
+    Opensearch web service.
+
+    Service-to-service authentication is handled using access token obtained
+    in advance from DBCs adgangsplatform.
+  license:
+    name: GPL-3.0
+    url: 'https://www.gnu.org/licenses/gpl-3.0.html'
+  version: 1.0-SNAPSHOT
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+  responses:
+    InternalError:
+      description: Internal error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ServiceError'
+    InvalidRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ServiceError'
+    UnauthorizedError:
+      description: Access token is missing or invalid
+
+  schemas:
+    ServiceError:
+      type: object
+      properties:
+        cause:
+          type: string
+          description: Specific cause of the error,
+                       for example a missing field in the request entity
+      required:
+        - cause
+
+    UpdateEvent:
+      type: object
+      properties:
+        bibliographicRecordId:
+          type: string
+          description: ID of the bibliographic material for this cover event
+        coverExists:
+          type: boolean
+          description: Cover exists flag
+      required:
+        - bibliographicRecordId
+        - coverExists
+
+security:
+  - bearerAuth: []
+
+paths:
+  /events:
+    post:
+      summary: Add update event
+      operationId: addUpdateEvent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateEvent'
+      responses:
+        '200':
+          description: Update event successfully processed
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalError'
