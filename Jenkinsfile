@@ -4,6 +4,7 @@ pipeline {
     agent { label "devel10" }
     tools {
         // refers to the name set in manage jenkins -> global tool configuration
+        jdk 'jdk11'
         maven "Maven 3"
     }
     triggers {
