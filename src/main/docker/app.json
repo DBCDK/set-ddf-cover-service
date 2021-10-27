@@ -1,8 +1,8 @@
 {
   "appName": "reference-app",
   "jdbc": {
-    "jdbc/sample_db": {
-      "url": "${SAMPLE_DB}"
+    "jdbc/pg_queue": {
+      "url": "${SET_DDF_COVER_DB}"
     }
   },
   "hazelcast": {

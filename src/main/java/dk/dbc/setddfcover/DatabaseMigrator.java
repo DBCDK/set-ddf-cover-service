@@ -25,7 +25,7 @@ import java.sql.SQLException;
 public class DatabaseMigrator {
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseMigrator.class);
 
-    @Resource(lookup = "jdbc/sample_db")
+    @Resource(lookup = "jdbc/pg_queue")
     DataSource dataSource;
 
     public DatabaseMigrator() {}
