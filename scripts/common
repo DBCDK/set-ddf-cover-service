@@ -13,12 +13,13 @@ getMyIP() {
 
 # build and test run values
 PORT=${PORT:-8080}
+DB_PORT=${DB_PORT:-5432}
 DOCKER_NAMESPACE=docker-io.dbc.dk
 DOCKER_NAME=set-ddf-cover-service
 DOCKER_REPOSITORY=${DOCKER_NAMESPACE}/${DOCKER_NAME}
 
 # sample app values
-SET_DDF_COVER_DB=${SET_DDF_COVER_DB:-"${USER}:${USER}@$(getMyIP):5432/pg_queue"}
+SET_DDF_COVER_DB=${SET_DDF_COVER_DB:-"${USER}:${USER}@$(getMyIP):${DB_PORT}/pg_queue"}
 MANDATORY_CONFIG_VALUE=${MANDATORY_CONFIG_VALUE:-42}
 CLUSTER_NAME=${CLUSTER_NAME:-''}
 OAUTH2_CLIENT_ID=${OAUTH2_CLIENT_ID:-"dummy-client-id"}
