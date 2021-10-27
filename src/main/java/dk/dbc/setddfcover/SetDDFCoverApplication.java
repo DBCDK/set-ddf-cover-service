@@ -14,7 +14,7 @@ import static java.util.Arrays.asList;
  * Note: application path must not be "/" if webapp/index.html is to be loaded.
  * </p>
  */
-@ApplicationPath("/api")
+@ApplicationPath("api")
 public class SetDDFCoverApplication extends Application {
 
     private static final Set<Class<?>> CLASSES = new HashSet<>(asList(
