@@ -4,8 +4,5 @@
     "jdbc/pg_queue": {
       "url": "${SET_DDF_COVER_DB}"
     }
-  },
-  "hazelcast": {
-    "clusterName": "${CLUSTER_NAME}"
   }
 }
