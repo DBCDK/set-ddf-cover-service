@@ -1,7 +1,9 @@
 #!groovy
 
+def workerNode = "devel10"
+
 pipeline {
-    agent { label "devel10" }
+    agent { label workerNode }
     tools {
         // refers to the name set in manage jenkins -> global tool configuration
         jdk 'jdk11'
@@ -10,6 +12,9 @@ pipeline {
     triggers {
         // This project uses the docker.dbc.dk/payara5-micro container
         upstream('/Docker-payara5-bump-trigger')
+    }
+    environment {
+        GITLAB_PRIVATE_TOKEN = credentials("metascrum-gitlab-api-token")
     }
     options {
         timestamps()
@@ -51,6 +56,31 @@ pipeline {
                         currentBuild.result = Result.FAILURE
                     } else {
                         docker.image("docker-io.dbc.dk/set-ddf-cover-service:${env.BRANCH_NAME}-${env.BUILD_NUMBER}").push()
+                    }
+                }
+            }
+        }
+
+        stage("Bump deploy version") {
+            agent {
+                docker {
+                    label workerNode
+                    image "docker.dbc.dk/build-env:latest"
+                    alwaysPull true
+                }
+            }
+
+            when {
+                expression {
+                    currentBuild.result == null || currentBuild.result == 'SUCCESS'
+                }
+            }
+            steps {
+                script {
+                    if (env.BRANCH_NAME == 'main') {
+                        sh """
+                            set-new-version set-ddf-cover-service.yml ${env.GITLAB_PRIVATE_TOKEN} metascrum/set-ddf-cover-service-secrets ${env.BRANCH_NAME}-${env.BUILD_NUMBER} -b fbstest
+                        """
                     }
                 }
             }
