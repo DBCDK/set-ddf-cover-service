@@ -9,11 +9,8 @@
     <persistence-unit name="pg_queue_PU" transaction-type="JTA">
         <jta-data-source>jdbc/pg_queue</jta-data-source>
         <class>dk.dbc.setddfcover.SetDDFCoverEntity</class>
-        <shared-cache-mode>DISABLE_SELECTIVE</shared-cache-mode>
         <properties>
             <property name="javax.persistence.schema-generation.database.action" value="none"/>
-            <property name="eclipselink.cache.coordination.protocol" value="fish.payara.persistence.eclipselink.cache.coordination.HazelcastPublishingTransportManager"/>
-            <property name="eclipselink.cache.coordination.channel" value="SET_DDF_COVER_CHANNEL"/>
         </properties>
     </persistence-unit>
 </persistence>
