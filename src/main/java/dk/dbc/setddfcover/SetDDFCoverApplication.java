@@ -1,5 +1,7 @@
 package dk.dbc.setddfcover;
 
+import org.glassfish.jersey.jackson.JacksonFeature;
+
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import java.util.HashSet;
@@ -14,11 +16,11 @@ import static java.util.Arrays.asList;
  * Note: application path must not be "/" if webapp/index.html is to be loaded.
  * </p>
  */
-@ApplicationPath("api")
+@ApplicationPath("/")
 public class SetDDFCoverApplication extends Application {
 
     private static final Set<Class<?>> CLASSES = new HashSet<>(asList(
-            SetDDFCoverResource.class
+            SetDDFCoverResource.class, JacksonFeature.class
     ));
 
     @Override
