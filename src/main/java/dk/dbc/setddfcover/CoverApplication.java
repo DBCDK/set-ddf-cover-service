@@ -2,6 +2,7 @@ package dk.dbc.setddfcover;
 
 import org.glassfish.jersey.jackson.JacksonFeature;
 
+import javax.annotation.security.DeclareRoles;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import java.util.HashSet;
@@ -17,10 +18,11 @@ import static java.util.Arrays.asList;
  * </p>
  */
 @ApplicationPath("/")
-public class SetDDFCoverApplication extends Application {
+@DeclareRoles("authenticated-user")
+public class CoverApplication extends Application {
 
     private static final Set<Class<?>> CLASSES = new HashSet<>(asList(
-            SetDDFCoverResource.class, JacksonFeature.class
+            CoverResource.class, JacksonFeature.class
     ));
 
     @Override

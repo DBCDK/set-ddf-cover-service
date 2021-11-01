@@ -1,7 +1,7 @@
 {
   "appName": "reference-app",
   "jdbc": {
-    "jdbc/pg_queue": {
+    "jdbc/pg_set_ddf_cover": {
       "url": "${SET_DDF_COVER_DB}"
     }
   }
