@@ -29,7 +29,6 @@ public class CoverEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(name = "bibliographicrecordid", nullable = false, unique = true)
     private String bibliographicRecordId;
     private boolean coverExists;
     private String pid;
