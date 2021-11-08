@@ -7,13 +7,18 @@ import dk.dbc.commons.testcontainers.postgres.DBCPostgreSQLContainer;
 import dk.dbc.httpclient.HttpClient;
 import dk.dbc.httpclient.HttpPost;
 import dk.dbc.setddfcover.CoverEntity;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.jackson.JacksonFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.Testcontainers;
+import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.Network;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
+import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,12 +34,19 @@ public class AbstractContainerTest {
 
     static final WireMockServer wireMockServer;
     protected static final GenericContainer setDDFCoverServiceContainer;
-    protected static final DBCPostgreSQLContainer dbcPostgreSQLContainer;
+    protected static final GenericContainer recordServiceContainer;
+    protected static final DBCPostgreSQLContainer setddfcoverDbContainer;
+    protected static final DBCPostgreSQLContainer rawrepoDbContainer;
+    protected static final DBCPostgreSQLContainer holdingsItemsDbContainer;
+
+    protected static final String recordServiceBaseUrl;
     protected static final String setDDFCoverServiceBaseUrl;
     protected static final HttpClient httpClient;
 
     static {
-        httpClient = HttpClient.create(HttpClient.newClient());
+        final Client client = HttpClient.newClient(new ClientConfig().register(new JacksonFeature()));
+        final Network network = Network.newNetwork();
+        httpClient = HttpClient.create(client);
 
         wireMockServer = new WireMockServer(WireMockConfiguration.options().dynamicPort());
 
@@ -63,15 +75,50 @@ public class AbstractContainerTest {
         Testcontainers.exposeHostPorts(wireMockServer.port());
         LOGGER.info("Wiremock server at port:{}", wireMockServer.port());
 
-        dbcPostgreSQLContainer = new DBCPostgreSQLContainer();
-        dbcPostgreSQLContainer.start();
-        dbcPostgreSQLContainer.exposeHostPort();
+        setddfcoverDbContainer = new DBCPostgreSQLContainer();
+        setddfcoverDbContainer.start();
+        setddfcoverDbContainer.exposeHostPort();
+
+        rawrepoDbContainer = new DBCPostgreSQLContainer("docker-io.dbc.dk/rawrepo-postgres-1.14-snapshot:master-5149");
+        rawrepoDbContainer.start();
+        rawrepoDbContainer.exposeHostPort();
+
+        holdingsItemsDbContainer = new DBCPostgreSQLContainer("docker-os.dbc.dk/holdings-items-postgres-1.1.4:latest");
+        holdingsItemsDbContainer.start();
+        holdingsItemsDbContainer.exposeHostPort();
+
+        recordServiceContainer = new GenericContainer("docker-io.dbc.dk/rawrepo-record-service:master-310")
+                .withLogConsumer(new Slf4jLogConsumer(LOGGER)).withNetwork(network)
+                .withNetworkAliases("recordservice")
+                .withEnv("INSTANCE", "it")
+                .withEnv("LOG_FORMAT", "text")
+                .withEnv("VIPCORE_CACHE_AGE", "0")
+                .withEnv("VIPCORE_ENDPOINT", "http://vipcore.iscrum-vip-extern-test.svc.cloud.dbc.dk")
+                .withEnv("RAWREPO_URL", rawrepoDbContainer.getPayaraDockerJdbcUrl())
+                .withEnv("HOLDINGS_URL", holdingsItemsDbContainer.getPayaraDockerJdbcUrl())
+                .withEnv("DUMP_THREAD_COUNT", "8")
+                .withEnv("DUMP_SLIZE_SIZE", "1000")
+                .withEnv("JAVA_MAX_HEAP_SIZE", "2G")
+                .withClasspathResourceMapping(".", "/currentdir", BindMode.READ_ONLY)
+                .withExposedPorts(8080)
+                .waitingFor(Wait.forHttp("/api/status"))
+                .withStartupTimeout(Duration.ofMinutes(2));
+        recordServiceContainer.start();
+//        recordServiceBaseUrl = "http://" + recordServiceContainer.getContainerIpAddress() +
+//                ":" + recordServiceContainer.getMappedPort(8080);
+//        recordServiceBaseUrl = "http://host.testcontainers.internal:" + recordServiceContainer.getMappedPort(8080);
+
+        recordServiceBaseUrl = "http://" + recordServiceContainer.getNetworkAliases().get(0) + ":" +
+                recordServiceContainer.getExposedPorts().get(0);
 
         setDDFCoverServiceContainer = new GenericContainer("docker-io.dbc.dk/set-ddf-cover-service:" + getDockerTag())
                 .withLogConsumer(new Slf4jLogConsumer(LOGGER))
+                .withNetwork(network)
+                .withNetworkAliases("ddfcover")
                 .withEnv("JAVA_MAX_HEAP_SIZE", "2G")
                 .withEnv("LOG_FORMAT", "text")
-                .withEnv("SET_DDF_COVER_DB", dbcPostgreSQLContainer.getPayaraDockerJdbcUrl())
+                .withEnv("SET_DDF_COVER_DB", setddfcoverDbContainer.getPayaraDockerJdbcUrl())
+                .withEnv("RAWREPO_RECORD_SERVICE_URL", recordServiceBaseUrl)
                 .withEnv("OAUTH2_CLIENT_ID", "123456789")
                 .withEnv("OAUTH2_CLIENT_SECRET", "abcdef")
                 .withEnv("OAUTH2_INTROSPECTION_URL", "http://host.testcontainers.internal:" + wireMockServer.port())
@@ -110,11 +157,11 @@ public class AbstractContainerTest {
         final String query = "Select * from cover where bibliographicrecordid=?";
         final List<CoverEntity> result = new ArrayList<>();
 
-        try (Connection connection = dbcPostgreSQLContainer.createConnection();
+        try (Connection connection = setddfcoverDbContainer.createConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, bibliographicRecordId);
             try (ResultSet resultSet = stmt.executeQuery()) {
-                if (resultSet.next()) {
+                while (resultSet.next()) {
                     CoverEntity coverEntity = new CoverEntity();
                     coverEntity.setId(resultSet.getInt(1));
                     coverEntity.setBibliographicRecordId(resultSet.getString(2));
@@ -125,6 +172,28 @@ public class AbstractContainerTest {
                 }
             }
             return result;
+        }
+    }
+
+    public void addBibliographicRecords(String bibliographicRecordId, String agencyId, boolean enrichment) throws SQLException {
+        String mimetype;
+        if ("870970".equals(agencyId)) {
+            mimetype = "text/marcxchange";
+        } else if ("191919".equals(agencyId)) {
+            mimetype = "text/enrichment+marcxchange";
+        } else {
+            mimetype = enrichment ? "text/enrichment+marcxchange" : "text/marcxchange";
+        }
+
+        final String query = "INSERT INTO records (bibliographicRecordId, agencyid, deleted, mimetype,content, created, modified) VALUES (?, ?, false, ?, null, now(), now())";
+
+        try (Connection connection = rawrepoDbContainer.createConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, bibliographicRecordId);
+            stmt.setInt(2, Integer.parseInt(agencyId));
+            stmt.setString(3, mimetype);
+
+            stmt.execute();
         }
     }
 
