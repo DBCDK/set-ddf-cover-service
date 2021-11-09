@@ -104,10 +104,6 @@ public class AbstractContainerTest {
                 .waitingFor(Wait.forHttp("/api/status"))
                 .withStartupTimeout(Duration.ofMinutes(2));
         recordServiceContainer.start();
-//        recordServiceBaseUrl = "http://" + recordServiceContainer.getContainerIpAddress() +
-//                ":" + recordServiceContainer.getMappedPort(8080);
-//        recordServiceBaseUrl = "http://host.testcontainers.internal:" + recordServiceContainer.getMappedPort(8080);
-
         recordServiceBaseUrl = "http://" + recordServiceContainer.getNetworkAliases().get(0) + ":" +
                 recordServiceContainer.getExposedPorts().get(0);
 
