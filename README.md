@@ -32,6 +32,8 @@ Then run ```scripts/build docker``` to build to docker image and then ```scripts
 In another terminal run ```scripts/start-server``` to start the set-ddf-cover-service.
 
 ## Client instructions
+OpenAPI spec can be found [here](https://raw.githubusercontent.com/DBCDK/set-ddf-cover-service/main/docs/openapi.yaml)
+
 There is only one endpoint which can be called like this:
 ```bash
 curl -X POST --data '{"bibliographicRecordId":"<post id>", "coverExists": <true|false>}'  -H 'content-type: application/json' -H 'Authorization: Bearer <token>' https://ddfhascover-stg.dbc.dk/api/v1/events
