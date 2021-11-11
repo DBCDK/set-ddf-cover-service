@@ -34,6 +34,9 @@ public class CoverResource {
     @SetDDFCoverEntityManager
     EntityManager entityManager;
 
+    @Inject
+    SolrDocStoreDAO solrDocStoreDAO;
+
     @POST
     @Path("v1/events")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -79,23 +82,38 @@ public class CoverResource {
                     final String pid = String.format("870970-basis:%s", bibliographicRecordId);
 
                     addCover(bibliographicRecordId, updateEvent.isCoverExists(), pid);
+                    solrDocStoreDAO.setHasDDFCover(bibliographicRecordId, "870970");
                 } else {
                     // If no 870970 record then set cover on all agencies which has that record
                     for (Integer agencyId : agenciesForRecordList) {
                         final String pid = String.format("%s-katalog:%s", agencyId, bibliographicRecordId);
 
                         addCover(bibliographicRecordId, updateEvent.isCoverExists(), pid);
+                        solrDocStoreDAO.setHasDDFCover(bibliographicRecordId, Integer.toString(agencyId));
                     }
                 }
             } else {
                 for (CoverEntity coverEntity : coverEntities) {
                     coverEntity.setCoverExists(updateEvent.isCoverExists());
 
-                    // TODO Call opensearch
+                    // Extract agency id from the pid
+                    final String agencyId = coverEntity.getPid().substring(0, 6);
+
+                    if (updateEvent.isCoverExists()) {
+                        solrDocStoreDAO.setHasDDFCover(coverEntity.getBibliographicRecordId(), agencyId);
+                    } else {
+                        solrDocStoreDAO.removeHasDDFCover(coverEntity.getBibliographicRecordId(), agencyId);
+                    }
                 }
             }
 
             return Response.ok().build();
+        } catch (SolrDocStoreException e) {
+            LOGGER.error("Got error from solr-doc-store: {}", e.getMessage(), e.getCause());
+            final ServiceError serviceError = new ServiceError();
+            serviceError.setCause("Internal error");
+
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(serviceError).build();
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e.getCause());
             final ServiceError serviceError = new ServiceError();
@@ -112,8 +130,6 @@ public class CoverResource {
         coverEntity.setPid(pid);
 
         entityManager.persist(coverEntity);
-
-        // TODO Call opensearch
     }
 
 }

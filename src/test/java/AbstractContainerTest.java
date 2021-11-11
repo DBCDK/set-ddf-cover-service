@@ -28,6 +28,12 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.delete;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
+
 
 public class AbstractContainerTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractContainerTest.class);
@@ -50,6 +56,17 @@ public class AbstractContainerTest {
 
         wireMockServer = new WireMockServer(WireMockConfiguration.options().dynamicPort());
 
+        // solr-doc-store PUT
+        wireMockServer.stubFor(put(urlMatching("/api/resource/hasDDFCoverUrl/[0-9]{6}:test.*"))
+                .withRequestBody(equalToJson("{\"has\":true}"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withBody("{\"ok\":true,\"text\":\"Success\"}")));
+        // solr-doc-store DELETE
+        wireMockServer.stubFor(delete(urlMatching("/api/resource/hasDDFCoverUrl/[0-9]{6}:test.*"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withBody("{\"ok\":true,\"text\":\"Success\"}")));
         // Add responses for auth introspect endpoint.
         wireMockServer.stubFor(WireMock.requestMatching(request ->
                         MatchResult.of(
@@ -118,6 +135,7 @@ public class AbstractContainerTest {
                 .withEnv("OAUTH2_CLIENT_ID", "123456789")
                 .withEnv("OAUTH2_CLIENT_SECRET", "abcdef")
                 .withEnv("OAUTH2_INTROSPECTION_URL", "http://host.testcontainers.internal:" + wireMockServer.port())
+                .withEnv("SOLR_DOC_STORE_URL", "http://host.testcontainers.internal:" + wireMockServer.port())
                 .withExposedPorts(8080)
                 .waitingFor(Wait.forHttp("/health/ready"))
                 .withStartupTimeout(Duration.ofMinutes(2));
