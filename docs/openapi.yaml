@@ -32,6 +32,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ServiceError'
+    NotFound:
+      description: Non record found with the supplied bibliographic record id
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ServiceError'
     UnauthorizedError:
       description: Access token is missing or invalid
 
@@ -80,5 +86,7 @@ paths:
           $ref: '#/components/responses/InvalidRequest'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalError'

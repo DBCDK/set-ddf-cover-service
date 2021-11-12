@@ -74,7 +74,7 @@ public class CoverResource {
                     final ServiceError serviceError = new ServiceError();
                     serviceError.setCause(message);
 
-                    return Response.status(Response.Status.BAD_REQUEST).entity(serviceError).build();
+                    return Response.status(Response.Status.NOT_FOUND).entity(serviceError).build();
                 }
 
                 // If there is a 870970 record then the cover must be associated with that record

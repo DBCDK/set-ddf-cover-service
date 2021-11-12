@@ -92,7 +92,7 @@ class CoverEntityIT extends AbstractContainerTest {
 
         Response response = postResponse(ENDPOINT, addCover, "valid-token");
         System.out.println(response.getEntity().toString());
-        assertThat("status code", response.getStatus(), is(400));
+        assertThat("status code", response.getStatus(), is(Response.Status.NOT_FOUND.getStatusCode()));
         assertThat("message", response.readEntity(String.class), is("{\"cause\":\"No record found with bibliographicRecordId testNonExistingBibliographicRecordId\"}"));
     }
 
