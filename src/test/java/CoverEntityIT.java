@@ -35,7 +35,7 @@ class CoverEntityIT extends AbstractContainerTest {
         assertThat("id has value", cover.getId(), is(notNullValue()));
         assertThat("bibliographicRecordId is the same", cover.getBibliographicRecordId(), is(bibliographicRecordId));
         assertThat("coverExists is the same", cover.isCoverExists(), is(true));
-        assertThat("pid has value", cover.getPid(), is("870970-basis:" + bibliographicRecordId));
+        assertThat("agencyId has value", cover.getAgencyId(), is("870970"));
         assertThat("modified has value", cover.getModified(), is(notNullValue()));
     }
 
@@ -59,7 +59,7 @@ class CoverEntityIT extends AbstractContainerTest {
         assertThat("bibliographicRecordId is the same", cover.getBibliographicRecordId(), is(bibliographicRecordId));
         assertThat("coverExists is true", cover.isCoverExists(), is(true));
         assertThat("id has value", cover.getId(), is(notNullValue()));
-        assertThat("pid has value", cover.getPid(), is("870970-basis:" + bibliographicRecordId));
+        assertThat("agencyId has value", cover.getAgencyId(), is("870970"));
         assertThat("modified has value", cover.getModified(), is(notNullValue()));
 
         // Update cover entity - set coverExists to false
@@ -77,7 +77,7 @@ class CoverEntityIT extends AbstractContainerTest {
         assertThat("bibliographicRecordId is the same", cover2.getBibliographicRecordId(), is(bibliographicRecordId));
         assertThat("coverExists is false", cover2.isCoverExists(), is(false));
         assertThat("id has value", cover2.getId(), is(notNullValue()));
-        assertThat("pid has value", cover.getPid(), is("870970-basis:" + bibliographicRecordId));
+        assertThat("agencyId has value", cover.getAgencyId(), is("870970"));
         assertThat("modified has value", cover2.getModified(), is(notNullValue()));
     }
 
@@ -116,7 +116,7 @@ class CoverEntityIT extends AbstractContainerTest {
         assertThat("bibliographicRecordId is the same", cover.getBibliographicRecordId(), is(bibliographicRecordId));
         assertThat("coverExists is true", cover.isCoverExists(), is(true));
         assertThat("id has value", cover.getId(), is(notNullValue()));
-        assertThat("pid has value", cover.getPid(), is("706050-katalog:" + bibliographicRecordId));
+        assertThat("agencyId has value", cover.getAgencyId(), is("706050"));
         assertThat("modified has value", cover.getModified(), is(notNullValue()));
 
         // Update cover entity - set coverExists to false
@@ -134,7 +134,7 @@ class CoverEntityIT extends AbstractContainerTest {
         assertThat("bibliographicRecordId is the same", cover2.getBibliographicRecordId(), is(bibliographicRecordId));
         assertThat("coverExists is false", cover2.isCoverExists(), is(false));
         assertThat("id has value", cover2.getId(), is(notNullValue()));
-        assertThat("pid has value", cover.getPid(), is("706050-katalog:" + bibliographicRecordId));
+        assertThat("agencyId has value", cover.getAgencyId(), is("706050"));
         assertThat("modified has value", cover2.getModified(), is(notNullValue()));
     }
 
@@ -159,9 +159,9 @@ class CoverEntityIT extends AbstractContainerTest {
             assertThat("bibliographicRecordId is the same", cover.getBibliographicRecordId(), is(bibliographicRecordId));
             assertThat("coverExists is true", cover.isCoverExists(), is(true));
             assertThat("id has value", cover.getId(), is(notNullValue()));
-            assertThat("pid has value", cover.getPid(), anyOf(
-                    is("706050-katalog:" + bibliographicRecordId),
-                    is("403020-katalog:" + bibliographicRecordId)));
+            assertThat("agencyId has value", cover.getAgencyId(), anyOf(
+                    is("706050"),
+                    is("403020")));
             assertThat("modified has value", cover.getModified(), is(notNullValue()));
         }
 
@@ -180,9 +180,9 @@ class CoverEntityIT extends AbstractContainerTest {
             assertThat("bibliographicRecordId is the same", cover.getBibliographicRecordId(), is(bibliographicRecordId));
             assertThat("coverExists is true", cover.isCoverExists(), is(false));
             assertThat("id has value", cover.getId(), is(notNullValue()));
-            assertThat("pid has value", cover.getPid(), anyOf(
-                    is("706050-katalog:" + bibliographicRecordId),
-                    is("403020-katalog:" + bibliographicRecordId)));
+            assertThat("agencyId has value", cover.getAgencyId(), anyOf(
+                    is("706050"),
+                    is("403020")));
             assertThat("modified has value", cover.getModified(), is(notNullValue()));
         }
     }
@@ -210,7 +210,7 @@ class CoverEntityIT extends AbstractContainerTest {
         assertThat("bibliographicRecordId is the same", cover.getBibliographicRecordId(), is(bibliographicRecordId));
         assertThat("coverExists is true", cover.isCoverExists(), is(true));
         assertThat("id has value", cover.getId(), is(notNullValue()));
-        assertThat("pid has value", cover.getPid(), is("870970-basis:" + bibliographicRecordId));
+        assertThat("agencyId has value", cover.getAgencyId(), is("870970"));
         assertThat("modified has value", cover.getModified(), is(notNullValue()));
     }
 

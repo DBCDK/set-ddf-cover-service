@@ -67,7 +67,7 @@ public class CoverResource {
                 final List<Integer> agenciesForRecordList = Arrays.stream(agenciesForRecordArray).collect(Collectors.toList());
 
                 if (agenciesForRecordList.isEmpty()) {
-                    // We don't have a record with the given faust. Return status code 400.
+                    // We don't have a record with the given faust. Return status code 404.
                     final String message = String.format("No record found with bibliographicRecordId %s", bibliographicRecordId);
                     LOGGER.error(message);
 
@@ -79,30 +79,25 @@ public class CoverResource {
 
                 // If there is a 870970 record then the cover must be associated with that record
                 if (agenciesForRecordList.contains(870970)) {
-                    final String pid = String.format("870970-basis:%s", bibliographicRecordId);
-
-                    addCover(bibliographicRecordId, updateEvent.isCoverExists(), pid);
-                    solrDocStoreDAO.setHasDDFCover(bibliographicRecordId, "870970");
+                    final String agencyId = "870970";
+                    addCover(bibliographicRecordId, updateEvent.isCoverExists(), agencyId);
+                    solrDocStoreDAO.setHasDDFCover(bibliographicRecordId, agencyId);
                 } else {
                     // If no 870970 record then set cover on all agencies which has that record
                     for (Integer agencyId : agenciesForRecordList) {
-                        final String pid = String.format("%s-katalog:%s", agencyId, bibliographicRecordId);
-
-                        addCover(bibliographicRecordId, updateEvent.isCoverExists(), pid);
-                        solrDocStoreDAO.setHasDDFCover(bibliographicRecordId, Integer.toString(agencyId));
+                        final String agencyIdAsString = Integer.toString(agencyId);
+                        addCover(bibliographicRecordId, updateEvent.isCoverExists(), agencyIdAsString);
+                        solrDocStoreDAO.setHasDDFCover(bibliographicRecordId, agencyIdAsString);
                     }
                 }
             } else {
                 for (CoverEntity coverEntity : coverEntities) {
                     coverEntity.setCoverExists(updateEvent.isCoverExists());
 
-                    // Extract agency id from the pid
-                    final String agencyId = coverEntity.getPid().substring(0, 6);
-
                     if (updateEvent.isCoverExists()) {
-                        solrDocStoreDAO.setHasDDFCover(coverEntity.getBibliographicRecordId(), agencyId);
+                        solrDocStoreDAO.setHasDDFCover(coverEntity.getBibliographicRecordId(), coverEntity.getAgencyId());
                     } else {
-                        solrDocStoreDAO.removeHasDDFCover(coverEntity.getBibliographicRecordId(), agencyId);
+                        solrDocStoreDAO.removeHasDDFCover(coverEntity.getBibliographicRecordId(), coverEntity.getAgencyId());
                     }
                 }
             }
@@ -123,11 +118,11 @@ public class CoverResource {
         }
     }
 
-    private void addCover(String bibliographicRecordId, boolean coverExists, String pid) {
+    private void addCover(String bibliographicRecordId, boolean coverExists, String agencyId) {
         final CoverEntity coverEntity = new CoverEntity();
         coverEntity.setBibliographicRecordId(bibliographicRecordId);
         coverEntity.setCoverExists(coverExists);
-        coverEntity.setPid(pid);
+        coverEntity.setAgencyId(agencyId);
 
         entityManager.persist(coverEntity);
     }

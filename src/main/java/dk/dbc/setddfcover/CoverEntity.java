@@ -30,7 +30,7 @@ public class CoverEntity {
     private Integer id;
     private String bibliographicRecordId;
     private boolean coverExists;
-    private String pid;
+    private String agencyId;
     private Date modified;
 
     public Integer getId() {
@@ -57,12 +57,12 @@ public class CoverEntity {
         this.coverExists = coverExists;
     }
 
-    public String getPid() {
-        return pid;
+    public String getAgencyId() {
+        return agencyId;
     }
 
-    public void setPid(String pid) {
-        this.pid = pid;
+    public void setAgencyId(String agencyId) {
+        this.agencyId = agencyId;
     }
 
     public Date getModified() {

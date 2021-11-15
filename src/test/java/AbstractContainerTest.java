@@ -180,7 +180,7 @@ public class AbstractContainerTest {
                     coverEntity.setId(resultSet.getInt(1));
                     coverEntity.setBibliographicRecordId(resultSet.getString(2));
                     coverEntity.setCoverExists(resultSet.getBoolean(3));
-                    coverEntity.setPid(resultSet.getString(4));
+                    coverEntity.setAgencyId(resultSet.getString(4));
                     coverEntity.setModified(resultSet.getDate(5));
                     result.add(coverEntity);
                 }
