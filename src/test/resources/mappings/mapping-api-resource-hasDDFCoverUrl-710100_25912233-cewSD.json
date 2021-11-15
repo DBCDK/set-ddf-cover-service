@@ -1,22 +1,24 @@
 {
-  "id" : "1bb101d7-b9a9-3b01-951c-5e69d9693ea7",
-  "request" : {
-    "url" : "/api/resource/hasDDFCoverUrl/710100:25912233",
-    "method" : "PUT",
-    "bodyPatterns" : [ {
-      "equalToJson" : "{\"has\":true}",
-      "ignoreArrayOrder" : true,
-      "ignoreExtraElements" : true
-    } ]
+  "id": "1bb101d7-b9a9-3b01-951c-5e69d9693ea7",
+  "request": {
+    "url": "/api/resource/hasDDFCoverUrl/710100:25912233",
+    "method": "PUT",
+    "bodyPatterns": [
+      {
+        "equalToJson": "{\"has\":true}",
+        "ignoreArrayOrder": true,
+        "ignoreExtraElements": true
+      }
+    ]
   },
-  "response" : {
-    "status" : 200,
-    "bodyFileName" : "body-api-resource-hasDDFCoverUrl-710100_25912233-cewSD.json",
-    "headers" : {
-      "Server" : "Payara Micro #badassfish",
-      "Content-Type" : "application/json",
-      "X-Frame-Options" : "SAMEORIGIN"
+  "response": {
+    "status": 200,
+    "bodyFileName": "body-api-resource-hasDDFCoverUrl-710100_25912233-cewSD.json",
+    "headers": {
+      "Server": "Payara Micro #badassfish",
+      "Content-Type": "application/json",
+      "X-Frame-Options": "SAMEORIGIN"
     }
   },
-  "uuid" : "1bb101d7-b9a9-3b01-951c-5e69d9693ea7"
+  "uuid": "1bb101d7-b9a9-3b01-951c-5e69d9693ea7"
 }

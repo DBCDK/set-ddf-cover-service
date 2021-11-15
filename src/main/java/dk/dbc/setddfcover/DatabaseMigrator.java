@@ -28,7 +28,8 @@ public class DatabaseMigrator {
     @Resource(lookup = "jdbc/pg_set_ddf_cover")
     DataSource dataSource;
 
-    public DatabaseMigrator() {}
+    public DatabaseMigrator() {
+    }
 
     public DatabaseMigrator(DataSource dataSource) {
         this.dataSource = dataSource;

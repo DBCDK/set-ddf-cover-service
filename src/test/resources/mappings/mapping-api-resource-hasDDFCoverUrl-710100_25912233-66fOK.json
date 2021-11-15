@@ -1,17 +1,17 @@
 {
-  "id" : "2f5a5326-57ed-37bd-84e6-07542f0e43bb",
-  "request" : {
-    "url" : "/api/resource/hasDDFCoverUrl/710100:25912233",
-    "method" : "DELETE"
+  "id": "2f5a5326-57ed-37bd-84e6-07542f0e43bb",
+  "request": {
+    "url": "/api/resource/hasDDFCoverUrl/710100:25912233",
+    "method": "DELETE"
   },
-  "response" : {
-    "status" : 200,
-    "bodyFileName" : "body-api-resource-hasDDFCoverUrl-710100_25912233-66fOK.json",
-    "headers" : {
-      "Server" : "Payara Micro #badassfish",
-      "Content-Type" : "application/json",
-      "X-Frame-Options" : "SAMEORIGIN"
+  "response": {
+    "status": 200,
+    "bodyFileName": "body-api-resource-hasDDFCoverUrl-710100_25912233-66fOK.json",
+    "headers": {
+      "Server": "Payara Micro #badassfish",
+      "Content-Type": "application/json",
+      "X-Frame-Options": "SAMEORIGIN"
     }
   },
-  "uuid" : "2f5a5326-57ed-37bd-84e6-07542f0e43bb"
+  "uuid": "2f5a5326-57ed-37bd-84e6-07542f0e43bb"
 }
