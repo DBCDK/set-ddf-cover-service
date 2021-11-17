@@ -4,15 +4,15 @@ import java.util.Objects;
 
 public class UpdateEvent {
 
-    private String bibliographicRecordId;
+    private String pid;
     private boolean coverExists;
 
-    public String getBibliographicRecordId() {
-        return bibliographicRecordId;
+    public String getPid() {
+        return pid;
     }
 
-    public void setBibliographicRecordId(String bibliographicRecordId) {
-        this.bibliographicRecordId = bibliographicRecordId;
+    public void setPid(String pid) {
+        this.pid = pid;
     }
 
     public boolean isCoverExists() {
@@ -26,7 +26,7 @@ public class UpdateEvent {
     @Override
     public String toString() {
         return "UpdateEvent{" +
-                "bibliographicRecordId='" + bibliographicRecordId + '\'' +
+                ", pid='" + pid + '\'' +
                 ", coverExists=" + coverExists +
                 '}';
     }
@@ -36,11 +36,11 @@ public class UpdateEvent {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UpdateEvent that = (UpdateEvent) o;
-        return coverExists == that.coverExists && Objects.equals(bibliographicRecordId, that.bibliographicRecordId);
+        return coverExists == that.coverExists && Objects.equals(pid, that.pid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(bibliographicRecordId, coverExists);
+        return Objects.hash(pid, coverExists);
     }
 }

@@ -32,12 +32,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ServiceError'
-    NotFound:
-      description: Non record found with the supplied bibliographic record id
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ServiceError'
     UnauthorizedError:
       description: Access token is missing or invalid
 
@@ -55,14 +49,14 @@ components:
     UpdateEvent:
       type: object
       properties:
-        bibliographicRecordId:
+        pid:
           type: string
-          description: ID of the bibliographic material for this cover event
+          description: pid of the bibliographic material for this cover event
         coverExists:
           type: boolean
           description: Cover exists flag
       required:
-        - bibliographicRecordId
+        - pid
         - coverExists
 
 security:
@@ -86,7 +80,5 @@ paths:
           $ref: '#/components/responses/InvalidRequest'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
-        '404':
-          $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalError'

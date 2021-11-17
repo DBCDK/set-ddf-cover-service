@@ -13,24 +13,23 @@ import java.util.Date;
 @Entity
 @NamedQueries({
         @NamedQuery(
-                name = CoverEntity.SELECT_FROM_COVER_BY_BIBLIOGRAPHICRECORDID_NAME,
-                query = CoverEntity.SELECT_FROM_COVER_BY_BIBLIOGRAPHICRECORDID_QUERY,
+                name = CoverEntity.SELECT_FROM_COVER_BY_PID_NAME,
+                query = CoverEntity.SELECT_FROM_COVER_BY_PID_QUERY,
                 lockMode = LockModeType.PESSIMISTIC_WRITE
         )
 })
 @Table(name = "cover")
 public class CoverEntity {
-    public static final String SELECT_FROM_COVER_BY_BIBLIOGRAPHICRECORDID_NAME = "select.from.cover";
-    public static final String SELECT_FROM_COVER_BY_BIBLIOGRAPHICRECORDID_QUERY =
+    public static final String SELECT_FROM_COVER_BY_PID_NAME = "select.from.cover";
+    public static final String SELECT_FROM_COVER_BY_PID_QUERY =
             "SELECT c FROM CoverEntity c " +
-                    "WHERE c.bibliographicRecordId = :bibliographicRecordId";
+                    "WHERE c.pid = :pid";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String bibliographicRecordId;
+    private String pid;
     private boolean coverExists;
-    private String agencyId;
     private Date modified;
 
     public Integer getId() {
@@ -41,12 +40,12 @@ public class CoverEntity {
         this.id = id;
     }
 
-    public String getBibliographicRecordId() {
-        return bibliographicRecordId;
+    public String getPid() {
+        return pid;
     }
 
-    public void setBibliographicRecordId(String bibliographicRecordId) {
-        this.bibliographicRecordId = bibliographicRecordId;
+    public void setPid(String pid) {
+        this.pid = pid;
     }
 
     public boolean isCoverExists() {
@@ -57,20 +56,11 @@ public class CoverEntity {
         this.coverExists = coverExists;
     }
 
-    public String getAgencyId() {
-        return agencyId;
-    }
-
-    public void setAgencyId(String agencyId) {
-        this.agencyId = agencyId;
-    }
-
     public Date getModified() {
-        return new Date(modified.getTime());
+        return modified;
     }
 
     public void setModified(Date modified) {
-        this.modified = new Date(modified.getTime());
+        this.modified = modified;
     }
-
 }

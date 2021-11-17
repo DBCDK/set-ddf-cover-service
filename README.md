@@ -21,7 +21,7 @@ To run the docker:
 First, the following environment variables must be set:
 ```bash
 SET_DDF_COVER_DB
-RAWREPO_RECORD_SERVICE_URL
+SOLR_DOC_STORE_URL
 OAUTH2_CLIENT_ID
 OAUTH2_CLIENT_SECRET
 ```
@@ -36,12 +36,12 @@ OpenAPI spec can be found [here](https://raw.githubusercontent.com/DBCDK/set-ddf
 
 There is only one endpoint which can be called like this:
 ```bash
-curl -X POST --data '{"bibliographicRecordId":"<post id>", "coverExists": <true|false>}'  -H 'content-type: application/json' -H 'Authorization: Bearer <token>' https://ddfhascover-stg.dbc.dk/api/v1/events
+curl -X POST --data '{"pid":"<pid>", "coverExists": <true|false>}'  -H 'content-type: application/json' -H 'Authorization: Bearer <token>' https://ddfhascover-stg.dbc.dk/api/v1/events
 ```
 
 For example:
 ```bash
-curl -X POST --data '{"bibliographicRecordId":"12345678", "coverExists": true}'  -H 'content-type: application/json' -H 'Authorization: Bearer 12345678901234567890' https://ddfhascover-stg.dbc.dk/api/v1/events
+curl -X POST --data '{"pid":"870970-basis:12345678", "coverExists": true}'  -H 'content-type: application/json' -H 'Authorization: Bearer 12345678901234567890' https://ddfhascover-stg.dbc.dk/api/v1/events
 ```
 
 A bearer token must be provided.
