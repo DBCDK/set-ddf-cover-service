@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 @Path("api")
 public class CoverResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(CoverResource.class);
-    private static final Pattern PID_PATTERN = Pattern.compile("(\\d{6})[-](.*)[:](.*)");
+    private static final Pattern PID_PATTERN = Pattern.compile("(\\d{6})[-]([a-z]+)[:](.*)");
 
     @Inject
     @SetDDFCoverEntityManager
