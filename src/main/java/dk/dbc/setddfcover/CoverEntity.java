@@ -57,10 +57,11 @@ public class CoverEntity {
     }
 
     public Date getModified() {
-        return modified;
+        return new Date(modified.getTime());
     }
 
     public void setModified(Date modified) {
-        this.modified = modified;
+        this.modified = new Date(modified.getTime());
     }
+
 }
