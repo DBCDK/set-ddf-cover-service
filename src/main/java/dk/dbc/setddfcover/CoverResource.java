@@ -104,6 +104,9 @@ public class CoverResource {
             serviceError.setCause("Internal error");
 
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(serviceError).build();
+        } finally {
+            LOGGER.info("/api/v1/events with params {\"pid\": \"{}\", \"coverExists\": {}}",
+                    updateEvent.getPid(), updateEvent.isCoverExists());
         }
     }
 
