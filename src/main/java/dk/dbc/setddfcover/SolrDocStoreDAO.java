@@ -68,7 +68,8 @@ public class SolrDocStoreDAO {
                 .withBaseUrl(solrDocStoreUrl)
                 .withPathElements(String.format(API_PATH, agencyId, bibliographicRecordId))
                 .withData(jsonbContext.marshall(dto), "application/json")
-                .withHeader("Accept", "application/json");
+                .withHeader("Accept", "application/json")
+                .withHeader("Content-type", "application/json");
 
         final Response response = httpPost.execute();
         final Response.Status actualStatus =
