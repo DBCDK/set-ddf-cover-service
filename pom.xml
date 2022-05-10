@@ -16,7 +16,7 @@
     <repositories>
         <repository>
             <id>mavenrepo.dbc.dk</id>
-            <url>http://mavenrepo.dbc.dk/content/groups/public/</url>
+            <url>https://mavenrepo.dbc.dk/content/groups/public/</url>
         </repository>
     </repositories>
 
@@ -41,6 +41,7 @@
         <dependency>
             <groupId>org.eclipse.microprofile</groupId>
             <artifactId>microprofile</artifactId>
+            <version>${microprofile.version}</version>
             <type>pom</type>
         </dependency>
         <dependency>
