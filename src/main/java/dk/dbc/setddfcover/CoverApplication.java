@@ -1,14 +1,12 @@
 package dk.dbc.setddfcover;
 
+import dk.dbc.commons.exceptionhandling.WebAppExceptionHandler;
 import org.glassfish.jersey.jackson.JacksonFeature;
 
 import javax.annotation.security.DeclareRoles;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
-import java.util.HashSet;
 import java.util.Set;
-
-import static java.util.Arrays.asList;
 
 /**
  * This class defines the other classes that make up this JAX-RS application by
@@ -21,9 +19,7 @@ import static java.util.Arrays.asList;
 @DeclareRoles("authenticated-user")
 public class CoverApplication extends Application {
 
-    private static final Set<Class<?>> CLASSES = new HashSet<>(asList(
-            CoverResource.class, JacksonFeature.class
-    ));
+    private static final Set<Class<?>> CLASSES = Set.of(CoverResource.class, JacksonFeature.class, WebAppExceptionHandler.class);
 
     @Override
     public Set<Class<?>> getClasses() {

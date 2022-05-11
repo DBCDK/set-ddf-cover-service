@@ -1,12 +1,16 @@
 package dk.dbc.setddfcover;
 
+import dk.dbc.httpclient.HttpGet;
+import dk.dbc.httpclient.HttpPost;
 import dk.dbc.setddfcover.model.UpdateEvent;
 import org.junit.jupiter.api.Test;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 
@@ -45,6 +49,41 @@ class CoverResourceIT extends AbstractContainerTest {
         assertThat("pid is the same", cover.getPid(), is(pid));
         assertThat("coverExists is the same", cover.isCoverExists(), is(true));
         assertThat("modified has value", cover.getModified(), is(notNullValue()));
+    }
+
+    @Test
+    void testInvalidMimeType() throws Exception {
+        final String pid = "870970-basis:testInvalidRequests";
+
+        UpdateEvent dto = new UpdateEvent();
+
+        // Empty dto
+        HttpPost httpPost = new HttpPost(httpClient)
+                .withBaseUrl(setDDFCoverServiceBaseUrl)
+                .withPathElements(ENDPOINT)
+                .withHeader("Accept", MediaType.APPLICATION_XML)
+                .withData(dto, MediaType.APPLICATION_JSON);
+        try (Response response = httpClient.execute(httpPost)) {
+            assertThat("status code", response.getStatus(), is(406));
+            String body = response.readEntity(String.class);
+            assertThat("has expected message", body, containsString("<message>HTTP 406 Not Acceptable</message>"));
+            assertThat("contains an errorId", body, containsString("<errorId>"));
+
+        }
+    }
+
+    @Test
+    void testInvalidUrl() throws Exception {
+        HttpGet httpGet = new HttpGet(httpClient)
+                .withBaseUrl(setDDFCoverServiceBaseUrl)
+                .withPathElements("/Nonsense")
+                .withHeader("Accept", MediaType.APPLICATION_JSON);
+        try (Response response = httpClient.execute(httpGet)) {
+            assertThat("status code", response.getStatus(), is(404));
+            String body = response.readEntity(String.class);
+            assertThat("has expected message", body, containsString("\"message\":\"HTTP 404 Not Found\""));
+            assertThat("contains an errorId", body, containsString("\"errorId\":"));
+        }
     }
 
     @Test

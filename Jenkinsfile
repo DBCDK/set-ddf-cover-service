@@ -49,8 +49,8 @@ pipeline {
                     def pmd = scanForIssues tool: [$class: 'Pmd']
                     publishIssues issues:[pmd], unstableTotalAll:1
 
-                    def spotbugs = scanForIssues tool: [$class: 'SpotBugs']
-                    publishIssues issues:[spotbugs], unstableTotalAll:1
+                    //def spotbugs = scanForIssues tool: [$class: 'SpotBugs']
+                    //publishIssues issues:[spotbugs], unstableTotalAll:1
 
                     if (status != 0) {
                         currentBuild.result = Result.FAILURE
