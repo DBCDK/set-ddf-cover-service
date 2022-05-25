@@ -1,17 +1,16 @@
 #!groovy
 
-def workerNode = "devel10"
+def workerNode = "devel11"
 
 pipeline {
     agent { label workerNode }
     tools {
-        // refers to the name set in manage jenkins -> global tool configuration
         jdk 'jdk11'
         maven "Maven 3"
     }
     triggers {
-        // This project uses the docker.dbc.dk/payara5-micro container
-        upstream('/Docker-payara5-bump-trigger')
+        upstream(upstreamProjects: "Docker-payara5-bump-trigger",
+			threshold: hudson.model.Result.SUCCESS)
     }
     environment {
         GITLAB_PRIVATE_TOKEN = credentials("metascrum-gitlab-api-token")
@@ -55,7 +54,7 @@ pipeline {
                     if (status != 0) {
                         currentBuild.result = Result.FAILURE
                     } else {
-                        docker.image("docker-io.dbc.dk/set-ddf-cover-service:${env.BRANCH_NAME}-${env.BUILD_NUMBER}").push()
+                        docker.image("docker-metascrum.artifacts.dbccloud.dk/set-ddf-cover-service:${env.BRANCH_NAME}-${env.BUILD_NUMBER}").push()
                     }
                 }
             }
@@ -65,7 +64,7 @@ pipeline {
             agent {
                 docker {
                     label workerNode
-                    image "docker.dbc.dk/build-env:latest"
+                    image "docker-dbc.artifacts.dbccloud.dk/build-env:latest"
                     alwaysPull true
                 }
             }
