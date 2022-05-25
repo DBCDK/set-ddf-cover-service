@@ -90,7 +90,7 @@ public class AbstractContainerTest {
         setddfcoverDbContainer.start();
         setddfcoverDbContainer.exposeHostPort();
 
-        setDDFCoverServiceContainer = new GenericContainer("docker-io.dbc.dk/set-ddf-cover-service:" + getDockerTag())
+        setDDFCoverServiceContainer = new GenericContainer("docker-metascrum.artifacts.dbccloud.dk/set-ddf-cover-service:" + getDockerTag())
                 .withLogConsumer(new Slf4jLogConsumer(LOGGER))
                 .withEnv("JAVA_MAX_HEAP_SIZE", "2G")
                 .withEnv("LOG_FORMAT", "text")
