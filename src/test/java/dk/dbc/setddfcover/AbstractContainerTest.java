@@ -86,7 +86,7 @@ public class AbstractContainerTest {
         Testcontainers.exposeHostPorts(wireMockServer.port());
         LOGGER.info("Wiremock server at port:{}", wireMockServer.port());
 
-        setddfcoverDbContainer = new DBCPostgreSQLContainer();
+        setddfcoverDbContainer = new DBCPostgreSQLContainer().withNetworkAliases("ddf-cover-db");
         setddfcoverDbContainer.start();
         setddfcoverDbContainer.exposeHostPort();
 
