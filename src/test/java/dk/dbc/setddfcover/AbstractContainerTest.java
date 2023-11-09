@@ -8,17 +8,18 @@ import com.github.tomakehurst.wiremock.matching.MatchResult;
 import dk.dbc.commons.testcontainers.postgres.DBCPostgreSQLContainer;
 import dk.dbc.httpclient.HttpClient;
 import dk.dbc.httpclient.HttpPost;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.core.Response;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.Network;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.Response;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -38,7 +39,7 @@ public class AbstractContainerTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractContainerTest.class);
 
     static final WireMockServer wireMockServer;
-    protected static final GenericContainer setDDFCoverServiceContainer;
+    protected static final GenericContainer<?> setDDFCoverServiceContainer;
     protected static final DBCPostgreSQLContainer setddfcoverDbContainer;
 
     protected static final String setDDFCoverServiceBaseUrl;
@@ -85,13 +86,15 @@ public class AbstractContainerTest {
         WireMock.configureFor("localhost", wireMockServer.port());
         Testcontainers.exposeHostPorts(wireMockServer.port());
         LOGGER.info("Wiremock server at port:{}", wireMockServer.port());
+        Network network = Network.newNetwork();
 
-        setddfcoverDbContainer = new DBCPostgreSQLContainer();
+        setddfcoverDbContainer = new DBCPostgreSQLContainer().withNetwork(network).withNetworkAliases("ddf-cover-db");
         setddfcoverDbContainer.start();
         setddfcoverDbContainer.exposeHostPort();
 
-        setDDFCoverServiceContainer = new GenericContainer("docker-metascrum.artifacts.dbccloud.dk/set-ddf-cover-service:" + getDockerTag())
+        setDDFCoverServiceContainer = new GenericContainer<>("docker-metascrum.artifacts.dbccloud.dk/set-ddf-cover-service:" + getDockerTag())
                 .withLogConsumer(new Slf4jLogConsumer(LOGGER))
+                .withNetwork(network)
                 .withEnv("JAVA_MAX_HEAP_SIZE", "2G")
                 .withEnv("LOG_FORMAT", "text")
                 .withEnv("SET_DDF_COVER_DB", setddfcoverDbContainer.getPayaraDockerJdbcUrl())
@@ -103,7 +106,7 @@ public class AbstractContainerTest {
                 .waitingFor(Wait.forHttp("/health/ready"))
                 .withStartupTimeout(Duration.ofMinutes(2));
         setDDFCoverServiceContainer.start();
-        setDDFCoverServiceBaseUrl = "http://" + setDDFCoverServiceContainer.getContainerIpAddress() +
+        setDDFCoverServiceBaseUrl = "http://" + setDDFCoverServiceContainer.getHost() +
                 ":" + setDDFCoverServiceContainer.getMappedPort(8080);
     }
 

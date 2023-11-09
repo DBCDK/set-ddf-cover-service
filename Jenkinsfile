@@ -9,11 +9,12 @@ pipeline {
         maven "Maven 3"
     }
     triggers {
-        upstream(upstreamProjects: "Docker-payara5-bump-trigger",
+        upstream(upstreamProjects: "Docker-payara6-bump-trigger",
 			threshold: hudson.model.Result.SUCCESS)
     }
     environment {
         GITLAB_PRIVATE_TOKEN = credentials("metascrum-gitlab-api-token")
+        MAVEN_OPTS="-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
     }
     options {
         timestamps()
@@ -30,7 +31,6 @@ pipeline {
                 script {
                     def status = sh returnStatus: true, script:  """
                         rm -rf \$WORKSPACE/.repo
-                        mvn -B -Dmaven.repo.local=\$WORKSPACE/.repo dependency:resolve dependency:resolve-plugins >/dev/null
                         mvn -B -Dmaven.repo.local=\$WORKSPACE/.repo clean
                     """
 
