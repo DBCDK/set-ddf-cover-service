@@ -106,7 +106,7 @@ public class AbstractContainerTest {
                 .waitingFor(Wait.forHttp("/health/ready"))
                 .withStartupTimeout(Duration.ofMinutes(2));
         setDDFCoverServiceContainer.start();
-        setDDFCoverServiceBaseUrl = "http://" + setDDFCoverServiceContainer.getContainerIpAddress() +
+        setDDFCoverServiceBaseUrl = "http://" + setDDFCoverServiceContainer.getHost() +
                 ":" + setDDFCoverServiceContainer.getMappedPort(8080);
     }
 
