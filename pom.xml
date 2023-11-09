@@ -62,7 +62,11 @@
             <artifactId>dbc-commons-exceptionhandling</artifactId>
             <version>2.0-SNAPSHOT</version>
         </dependency>
-
+        <dependency>
+            <groupId>dk.dbc</groupId>
+            <artifactId>dbc-commons-rs-auth</artifactId>
+            <version>2.0-SNAPSHOT</version>
+        </dependency>
         <!-- test dependencies -->
 
         <dependency>
@@ -73,19 +77,16 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
         </dependency>
-
         <dependency>
             <groupId>dk.dbc</groupId>
             <artifactId>dbc-commons-testcontainers-postgres</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>dk.dbc</groupId>
             <artifactId>dbc-commons-httpclient</artifactId>
@@ -105,19 +106,10 @@
             <artifactId>jersey-hk2</artifactId>
             <scope>test</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.opentable.components</groupId>-->
-<!--            <artifactId>otj-pg-embedded</artifactId>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>eclipselink</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>dk.dbc</groupId>
-            <artifactId>dbc-commons-rs-auth</artifactId>
-            <version>2.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.github.tomakehurst</groupId>
@@ -152,10 +144,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.0.0-M5</version>
-                <configuration>
-                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
