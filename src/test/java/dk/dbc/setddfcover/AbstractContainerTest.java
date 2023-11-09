@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.Network;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
@@ -85,13 +86,15 @@ public class AbstractContainerTest {
         WireMock.configureFor("localhost", wireMockServer.port());
         Testcontainers.exposeHostPorts(wireMockServer.port());
         LOGGER.info("Wiremock server at port:{}", wireMockServer.port());
+        Network network = Network.newNetwork();
 
-        setddfcoverDbContainer = new DBCPostgreSQLContainer().withNetworkAliases("ddf-cover-db");
+        setddfcoverDbContainer = new DBCPostgreSQLContainer().withNetwork(network).withNetworkAliases("ddf-cover-db");
         setddfcoverDbContainer.start();
         setddfcoverDbContainer.exposeHostPort();
 
         setDDFCoverServiceContainer = new GenericContainer<>("docker-metascrum.artifacts.dbccloud.dk/set-ddf-cover-service:" + getDockerTag())
                 .withLogConsumer(new Slf4jLogConsumer(LOGGER))
+                .withNetwork(network)
                 .withEnv("JAVA_MAX_HEAP_SIZE", "2G")
                 .withEnv("LOG_FORMAT", "text")
                 .withEnv("SET_DDF_COVER_DB", setddfcoverDbContainer.getPayaraDockerJdbcUrl())

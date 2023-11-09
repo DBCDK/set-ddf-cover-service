@@ -6,6 +6,7 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -26,8 +27,7 @@ public class CoverResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(CoverResource.class);
     private static final Pattern PID_PATTERN = Pattern.compile("(\\d{6})[-]([a-z]+)[:](.*)");
 
-    @Inject
-    @SetDDFCoverEntityManager
+    @PersistenceContext(unitName = "pg_set_ddf_cover_PU")
     EntityManager entityManager;
 
     @Inject
