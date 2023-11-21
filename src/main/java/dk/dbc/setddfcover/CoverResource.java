@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.concurrent.locks.LockSupport;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,6 +32,7 @@ import java.util.regex.Pattern;
 public class CoverResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(CoverResource.class);
     private static final Pattern PID_PATTERN = Pattern.compile("(\\d{6})-([a-z]+):(.*)");
+    private static final int DOC_STORE_RETRIES = 2;
     @PersistenceContext(unitName = "pg_set_ddf_cover_PU")
     EntityManager entityManager;
 
@@ -87,12 +89,9 @@ public class CoverResource {
                 }
             }
             CoverEntity coverEntity = coverEntities.get(0);
-            coverEntity.setCoverExists(updateEvent.isCoverExists());
-            if (updateEvent.isCoverExists()) {
-                solrDocStoreDAO.setHasDDFCover(bibliographicRecordId, agencyId);
-            } else {
-                solrDocStoreDAO.removeHasDDFCover(bibliographicRecordId, agencyId);
-            }
+            boolean exists = updateEvent.isCoverExists();
+            coverEntity.setCoverExists(exists);
+            updateDocStore(bibliographicRecordId, agencyId, exists, DOC_STORE_RETRIES);
             return Response.ok().build();
         } catch (SolrDocStoreException e) {
             LOGGER.error("Got error from solr-doc-store while updating pid {}", updateEvent.getPid(), e);
@@ -104,6 +103,20 @@ public class CoverResource {
             ServiceError serviceError = new ServiceError();
             serviceError.setCause("Internal error");
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(serviceError).build();
+        }
+    }
+
+    private void updateDocStore(String bibliographicRecordId, String agencyId, boolean exists, int retries) throws SolrDocStoreException, JSONBException {
+        try {
+            if (exists) {
+                solrDocStoreDAO.setHasDDFCover(bibliographicRecordId, agencyId);
+            } else {
+                solrDocStoreDAO.removeHasDDFCover(bibliographicRecordId, agencyId);
+            }
+        } catch (SolrDocStoreException e) {
+            LockSupport.parkNanos(100_000_000);
+            if(retries < 1) throw e;
+            updateDocStore(bibliographicRecordId, agencyId, exists, retries - 1);
         }
     }
 

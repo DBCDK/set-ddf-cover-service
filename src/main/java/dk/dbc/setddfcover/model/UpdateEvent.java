@@ -3,7 +3,6 @@ package dk.dbc.setddfcover.model;
 import java.util.Objects;
 
 public class UpdateEvent {
-
     private String pid;
     private boolean coverExists;
 

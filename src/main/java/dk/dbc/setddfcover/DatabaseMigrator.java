@@ -22,7 +22,7 @@ import java.sql.SQLException;
  */
 @Startup
 @Singleton
-public class DatabaseMigrator {
+public class DatabaseMigrator {{}
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseMigrator.class);
 
     @Resource(lookup = "jdbc/pg_set_ddf_cover")

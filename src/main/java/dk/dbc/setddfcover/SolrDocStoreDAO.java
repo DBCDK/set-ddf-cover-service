@@ -76,9 +76,7 @@ public class SolrDocStoreDAO {
                 Response.Status.fromStatusCode(response.getStatus());
 
         if (actualStatus != Response.Status.OK) {
-            LOGGER.error("Got status code {} from solr-doc-store when calling PUT {} with message '{}'",
-                    actualStatus, API_PATH, response.readEntity(String.class));
-            throw new SolrDocStoreException("Got response status " + actualStatus.getStatusCode() + " from SolrDocStore");
+            throw new SolrDocStoreException("Got response status " + actualStatus.getStatusCode() + " from SolrDocStore when calling PUT " + API_PATH + ", message:\n" + response.readEntity(String.class));
         }
     }
 
@@ -88,14 +86,11 @@ public class SolrDocStoreDAO {
                 .withPathElements(String.format(API_PATH, agencyId, bibliographicRecordId))
                 .withHeader("Accept", "application/json");
 
-        final Response response = httpDelete.execute();
-        final Response.Status actualStatus =
-                Response.Status.fromStatusCode(response.getStatus());
-
-        if (actualStatus != Response.Status.OK) {
-            LOGGER.error("Got status code {} from solr-doc-store when calling DELETE {} with message '{}'",
-                    actualStatus, API_PATH, response.readEntity(String.class));
-            throw new SolrDocStoreException("Got response status " + actualStatus.getStatusCode() + " from SolrDocStore");
+        try(Response response = httpDelete.execute()) {
+            final Response.Status actualStatus = Response.Status.fromStatusCode(response.getStatus());
+            if (actualStatus != Response.Status.OK) {
+                throw new SolrDocStoreException("Got status code " + actualStatus + " from solr-doc-store when calling DELETE " + API_PATH + ", message:\n" + response.readEntity(String.class));
+            }
         }
     }
 
