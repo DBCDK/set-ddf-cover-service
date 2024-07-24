@@ -20,6 +20,10 @@
         </repository>
     </repositories>
 
+    <properties>
+        <sonar.projectKey>set-ddf-cover-service</sonar.projectKey>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>jakarta.platform</groupId>
